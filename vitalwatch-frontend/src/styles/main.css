@@ -1,0 +1,320 @@
+/* ─────────────────────────────────────────────
+   VitalWatch — Design System
+   Fonts:
+     Headlines → Manrope (bold, authoritative)
+     Body      → Inter   (readable, neutral)
+     Labels    → IBM Plex Sans (precise, clinical)
+   Theme: Light default
+───────────────────────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+
+/* ── TOKENS ─────────────────────────────────── */
+:root {
+  /* Status */
+  --color-critical:        #C62828;
+  --color-critical-bg:     #FFEBEE;
+  --color-critical-border: #EF9A9A;
+
+  --color-warning:         #E65100;
+  --color-warning-bg:      #FFF3E0;
+  --color-warning-border:  #FFCC80;
+
+  --color-stable:          #2E7D32;
+  --color-stable-bg:       #E8F5E9;
+  --color-stable-border:   #A5D6A7;
+
+  /* Neutrals */
+  --color-text-primary:    #1A1A1A;
+  --color-text-secondary:  #4A4A4A;
+  --color-text-muted:      #888888;
+  --color-surface:         #FFFFFF;
+  --color-surface-alt:     #F7F7F7;
+  --color-border:          #E0E0E0;
+  --color-border-strong:   #BDBDBD;
+
+  /* AI */
+  --color-ai-bg:           #E3F2FD;
+  --color-ai-border:       #90CAF9;
+  --color-ai-text:         #1565C0;
+
+  /* Fonts */
+  --font-headline: 'Manrope', -apple-system, sans-serif;
+  --font-body:     'Inter', -apple-system, sans-serif;
+  --font-label:    'IBM Plex Sans', -apple-system, sans-serif;
+  --font-mono:     'IBM Plex Mono', 'Courier New', monospace;
+
+  /* Font sizes — calibrated for clinical readability */
+  --fs-xs:    11px;   /* micro labels, timestamps */
+  --fs-sm:    12px;   /* secondary labels */
+  --fs-base:  14px;   /* body text */
+  --fs-md:    15px;   /* slightly emphasised body */
+  --fs-lg:    18px;   /* section headings */
+  --fs-xl:    22px;   /* page titles */
+  --fs-2xl:   28px;   /* vital values (tiles) */
+  --fs-3xl:   38px;   /* large vital display */
+
+  /* Spacing */
+  --space-1: 4px;  --space-2: 8px;   --space-3: 12px;
+  --space-4: 16px; --space-5: 20px;  --space-6: 24px;
+  --space-8: 32px; --space-10: 40px;
+
+  /* Layout */
+  --navbar-height:     56px;
+  --status-bar-height: 4px;
+
+  /* Radius */
+  --radius-sm: 4px;
+  --radius:    7px;
+  --radius-lg: 11px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow:    0 2px 8px rgba(0,0,0,0.09), 0 1px 3px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.10), 0 2px 6px rgba(0,0,0,0.05);
+
+  --transition: 140ms ease;
+}
+
+/* ── RESET ───────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body, #root      { height: 100%; }
+
+body {
+  font-family:             var(--font-body);
+  font-size:               var(--fs-base);
+  color:                   var(--color-text-primary);
+  background-color:        var(--color-surface-alt);
+  line-height:             1.5;
+  -webkit-font-smoothing:  antialiased;
+}
+
+button { font-family: var(--font-body); cursor: pointer; border: none; outline: none; }
+input  { font-family: var(--font-body); }
+a      { color: inherit; text-decoration: none; }
+
+/* ── FONT ROLE CLASSES ───────────────────────── */
+
+/* Headlines — Manrope. Used for patient names,
+   screen titles, vital values, risk levels */
+.f-headline { font-family: var(--font-headline); }
+
+/* Body — Inter. Used for descriptions, notes,
+   paragraph text, alert trigger descriptions */
+.f-body     { font-family: var(--font-body); }
+
+/* Labels — IBM Plex Sans. Used for all caps section
+   titles, field labels, unit strings, timestamps */
+.f-label    { font-family: var(--font-label); }
+
+/* ── TYPOGRAPHY SCALE ───────────────────────── */
+
+/* Patient names, page titles */
+h1, .h1 {
+  font-family: var(--font-headline);
+  font-size:   var(--fs-xl);
+  font-weight: 800;
+  letter-spacing: -0.4px;
+  line-height: 1.15;
+  color: var(--color-text-primary);
+}
+
+/* Section headings, card titles */
+h2, .h2 {
+  font-family: var(--font-headline);
+  font-size:   var(--fs-lg);
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  line-height: 1.2;
+  color: var(--color-text-primary);
+}
+
+/* Sub-headings */
+h3, .h3 {
+  font-family: var(--font-headline);
+  font-size:   var(--fs-md);
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--color-text-primary);
+}
+
+/* Vital reading numbers — large + mono feel via Manrope */
+.vital-value {
+  font-family:  var(--font-headline);
+  font-size:    var(--fs-3xl);
+  font-weight:  800;
+  letter-spacing: -1px;
+  line-height:  1;
+}
+
+/* Vital value in cards (slightly smaller) */
+.vital-value-sm {
+  font-family:  var(--font-headline);
+  font-size:    var(--fs-2xl);
+  font-weight:  800;
+  letter-spacing: -0.5px;
+  line-height:  1;
+}
+
+/* All-caps section label — IBM Plex Sans */
+.section-label {
+  font-family:    var(--font-label);
+  font-size:      var(--fs-xs);
+  font-weight:    600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color:          var(--color-text-muted);
+}
+
+/* Timestamps and mono data */
+.timestamp {
+  font-family: var(--font-label);
+  font-size:   var(--fs-xs);
+  color:       var(--color-text-muted);
+}
+
+/* Unit strings next to vital values */
+.vital-unit {
+  font-family: var(--font-label);
+  font-size:   var(--fs-sm);
+  font-weight: 500;
+  color:       var(--color-text-muted);
+}
+
+/* ── STATUS BADGES ───────────────────────────── */
+.badge {
+  display:       inline-flex;
+  align-items:   center;
+  padding:       2px 7px;
+  border-radius: var(--radius-sm);
+  font-family:   var(--font-label);
+  font-size:     var(--fs-xs);
+  font-weight:   600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  white-space:   nowrap;
+}
+.badge-critical { background: var(--color-critical);   color: #fff; }
+.badge-warning  { background: var(--color-warning);    color: #fff; }
+.badge-stable   { background: var(--color-stable);     color: #fff; }
+.badge-acked    { background: var(--color-border);     color: var(--color-text-muted); }
+.badge-escalated{ background: #7C3AED;                  color: #fff; }
+
+/* ── BUTTONS ─────────────────────────────────── */
+.btn {
+  display:      inline-flex;
+  align-items:  center;
+  gap:          var(--space-2);
+  padding:      var(--space-2) var(--space-4);
+  border-radius: var(--radius);
+  font-family:  var(--font-label);
+  font-size:    var(--fs-sm);
+  font-weight:  600;
+  transition:   background var(--transition), opacity var(--transition);
+  white-space:  nowrap;
+}
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-primary { background: #1565C0; color: #FFFFFF; }
+.btn-primary:hover:not(:disabled) { background: #0D47A1; }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+}
+.btn-ghost:hover:not(:disabled) { background: var(--color-surface-alt); }
+
+.btn-ack {
+  background: #1565C0; color: #FFFFFF;
+  font-size: var(--fs-xs);
+  padding: var(--space-1) var(--space-3);
+}
+.btn-ack:hover { background: #0D47A1; }
+
+.btn-escalate {
+  background: transparent; color: var(--color-critical);
+  border: 1px solid var(--color-critical);
+  font-size: var(--fs-xs);
+  padding: var(--space-1) var(--space-3);
+}
+.btn-escalate:hover { background: var(--color-critical-bg); }
+
+/* ── SCROLLBAR ───────────────────────────────── */
+::-webkit-scrollbar       { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-border-strong); border-radius: 3px; }
+
+/* ── ANIMATIONS ──────────────────────────────── */
+@keyframes spin       { to { transform: rotate(360deg); } }
+@keyframes shimmer    { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+@keyframes slideIn    { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+@keyframes pulseRing  { 0%,100%{box-shadow:0 0 0 0 rgba(198,40,40,0)} 50%{box-shadow:0 0 0 5px rgba(198,40,40,0.08)} }
+@keyframes valueFlash { 0%{opacity:0.3} 60%{opacity:1} 100%{opacity:1} }
+@keyframes dropIn     { from{opacity:0;transform:translateY(-6px) scale(0.97)} to{opacity:1;transform:translateY(0) scale(1)} }
+
+/* ── UTILITY ─────────────────────────────────── */
+.spinner {
+  width:20px; height:20px;
+  border:2px solid var(--color-border);
+  border-top-color:#1565C0;
+  border-radius:50%;
+  animation: spin 0.65s linear infinite;
+}
+.truncate { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+/* ══════════════════════════════════════════════
+   DARK MODE
+   Toggled by adding [data-theme="dark"] to <html>
+   Light mode remains the default.
+══════════════════════════════════════════════ */
+
+[data-theme="dark"] {
+  /* Surfaces */
+  --color-surface:         #0D1117;
+  --color-surface-alt:     #161B22;
+
+  /* Text */
+  --color-text-primary:    #E6EDF3;
+  --color-text-secondary:  #8B949E;
+  --color-text-muted:      #484F58;
+
+  /* Borders */
+  --color-border:          #21262D;
+  --color-border-strong:   #30363D;
+
+  /* Status — slightly brighter for dark bg */
+  --color-critical:        #FF4444;
+  --color-critical-bg:     #160B0B;
+  --color-critical-border: #3D1515;
+
+  --color-warning:         #FF8C00;
+  --color-warning-bg:      #140D00;
+  --color-warning-border:  #3A2500;
+
+  --color-stable:          #2EA043;
+  --color-stable-bg:       #051810;
+  --color-stable-border:   #0C3018;
+
+  /* AI */
+  --color-ai-bg:           #0A1628;
+  --color-ai-border:       #163456;
+  --color-ai-text:         #58A6FF;
+}
+
+/* Dark mode — component overrides */
+[data-theme="dark"] body {
+  background-color: var(--color-surface-alt);
+  color:            var(--color-text-primary);
+}
+
+/* All surfaces that use inline #FFFFFF / #F8F8F8 need
+   explicit dark overrides on their containers */
+[data-theme="dark"] nav {
+  background: rgba(13,17,23,0.97) !important;
+  border-bottom-color: var(--color-border) !important;
+}
+
+/* Ward overview columns */
+[data-theme="dark"] .ward-grid-bg  { background: var(--color-surface-alt) !important; }
+[data-theme="dark"] .surface-white { background: var(--color-surface) !important; border-color: var(--color-border) !important; }
