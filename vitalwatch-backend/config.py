@@ -10,6 +10,7 @@ change this file only.
 """
 
 import os
+from ML_models import rf_model_path, scaler_path, feature_cols_path
 
 # ─────────────────────────────────────────────
 # MQTT
@@ -29,9 +30,9 @@ DB_USERS      = os.getenv('DB_USERS',      'users.db')
 # ─────────────────────────────────────────────
 # AI MODEL
 # ─────────────────────────────────────────────
-MODEL_PATH         = os.getenv('MODEL_PATH',         'rf_model.pkl')
-SCALER_PATH        = os.getenv('SCALER_PATH',        'scaler.pkl')
-FEATURE_COLS_PATH  = os.getenv('FEATURE_COLS_PATH',  'feature_cols.pkl')
+MODEL_PATH         = os.getenv('MODEL_PATH',         rf_model_path)
+SCALER_PATH        = os.getenv('SCALER_PATH',        scaler_path)
+FEATURE_COLS_PATH  = os.getenv('FEATURE_COLS_PATH',  feature_cols_path)
 
 # ─────────────────────────────────────────────
 # ALERT SUPPRESSION
