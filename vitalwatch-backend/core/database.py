@@ -164,7 +164,6 @@ _MONITORING_SCHEMA = """
         body_temperature REAL NOT NULL,
         read_at          TEXT NOT NULL,
         received_at      TEXT DEFAULT (datetime('now')),
-        is_simulated     INTEGER DEFAULT 0
     );
 
     CREATE INDEX IF NOT EXISTS idx_readings_patient

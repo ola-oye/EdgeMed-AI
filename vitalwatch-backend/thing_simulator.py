@@ -4,10 +4,6 @@ simulator.py
 Simulates bedside monitoring devices by publishing realistic
 vital sign readings to the MQTT broker.
 
-This simulator does ONE thing — publish readings.
-It does not register patients, enroll them, or assign devices.
-That is the admin's job through the Admin Panel in the dashboard.
-
 Before running this simulator:
   1. Log in as admin (admin@hospital.org / password123)
   2. Go to Admin Panel → Patient Registration
@@ -265,8 +261,7 @@ class PatientSimulator(threading.Thread):
                     'spo2':             vitals['spo2'],
                     'respiration_rate': vitals['respiration_rate'],
                     'body_temperature': vitals['body_temperature'],
-                    'read_at':          datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S'),
-                    '_simulated':       True
+                    'read_at':          datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S')
                 }
 
                 self.client.publish(self.topic, json.dumps(payload), qos=1)

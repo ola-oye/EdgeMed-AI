@@ -61,27 +61,26 @@ def on_message(client, userdata, message):
         )
         logger.warning(f'[mqtt] Validation failed for {topic}: {errors}')
         return
+    
+    print(payload)
 
     # Run the pipeline
-    try:
-        result = _vitals_svc.process_reading(
-            payload      = payload,
-            is_simulated = data.get('_simulated', False)
-        )
-        logger.info(
-            f'[pipeline] device={payload.device_id} '
-            f'patient={result.patient_id} '
-            f'risk={result.risk_level.upper()} '
-            f'confidence={result.confidence_score:.1f}%'
-        )
-        # Push update to all connected browsers
-        ws_manager.broadcast_sync(result.to_dict())
+    # try:
+    #     result = _vitals_svc.process_reading(payload      = payload)
+    #     logger.info(
+    #         f'[pipeline] device={payload.device_id} '
+    #         f'patient={result.patient_id} '
+    #         f'risk={result.risk_level.upper()} '
+    #         f'confidence={result.confidence_score:.1f}%'
+    #     )
+    #     # Push update to all connected browsers
+    #     ws_manager.broadcast_sync(result.to_dict())
 
-    except UnassignedDeviceError as e:
-        logger.warning(f'[pipeline] {e}')
+    # except UnassignedDeviceError as e:
+    #     logger.warning(f'[pipeline] {e}')
 
-    except Exception as e:
-        logger.error(f'[pipeline] ERROR for device {payload.device_id}: {e}', exc_info=True)
+    # except Exception as e:
+    #     logger.error(f'[pipeline] ERROR for device {payload.device_id}: {e}', exc_info=True)
 
 
 # ── START ─────────────────────────────────────────────────

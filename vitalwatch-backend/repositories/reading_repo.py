@@ -13,7 +13,7 @@ class ReadingRepository:
     def insert(self, patient_id: str, device_id: str,
                heart_rate: float, spo2: float,
                respiration_rate: float, body_temperature: float,
-               read_at: str, is_simulated: bool = False) -> str:
+               read_at: str) -> str:
         reading_id = new_id()
         conn = get_monitoring_conn()
         conn.execute("""
@@ -24,7 +24,7 @@ class ReadingRepository:
             VALUES (?,?,?,?,?,?,?,?,?,?)
         """, (reading_id, patient_id, device_id,
               heart_rate, spo2, respiration_rate, body_temperature,
-              read_at, now_utc(), int(is_simulated)))
+              read_at, now_utc()))
         conn.commit()
         conn.close()
         return reading_id

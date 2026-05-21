@@ -144,33 +144,44 @@ class InferenceEngine:
             if importances.sum() == 0:
                 return {}
 
-            # Support both snake_case and Title_Case feature names
-            vital_prefixes = {
-                'heart_rate':       'Heart Rate',
-                'Heart_Rate':       'Heart Rate',
-                'spo2':             'SpO₂',
-                'SpO2':             'SpO₂',
-                'respiration_rate': 'Respiration Rate',
-                'Respiration_Rate': 'Respiration Rate',
-                'body_temperature': 'Body Temperature',
-                'Body_Temperature': 'Body Temperature',
-            }
+            # Map feature column prefixes to display labels.
+            # Interaction features (spo2_x_rr etc.) are distributed
+            # to the vitals they involve.
+            vital_prefixes = [
+                ('Heart_Rate',       'Heart Rate'),
+                ('SpO2',             'SpO₂'),
+                ('Respiration_Rate', 'Respiration Rate'),
+                ('Body_Temperature', 'Body Temperature'),
+                ('heart_rate',       'Heart Rate'),
+                ('spo2',             'SpO₂'),
+                ('respiration_rate', 'Respiration Rate'),
+                ('body_temperature', 'Body Temperature'),
+                # Interaction features — assign to first vital involved
+                ('spo2_x_rr',        'SpO₂'),
+                ('hr_x_temp',        'Heart Rate'),
+                ('spo2_rr_ratio',    'SpO₂'),
+            ]
 
             grouped: dict[str, float] = {}
             for feat, imp in zip(df.columns, importances):
-                matched = False
-                for prefix, label in vital_prefixes.items():
-                    if feat.startswith(prefix):
+                if imp == 0:
+                    continue
+                for prefix, label in vital_prefixes:
+                    if feat.startswith(prefix) or feat == prefix:
                         grouped[label] = grouped.get(label, 0.0) + imp
-                        matched = True
                         break
+
+            if not grouped:
+                return {}
 
             g_total = sum(grouped.values())
             if g_total == 0:
                 return {}
             return {k: round((v / g_total) * 100, 1)
                     for k, v in sorted(grouped.items(), key=lambda x: -x[1])}
-        except Exception:
+        except Exception as e:
+            import logging
+            logging.getLogger(__name__).warning(f'[inference] contributing_factors failed: {e}')
             return {}
 
     # ── EXPLANATION GENERATION ────────────────────────────

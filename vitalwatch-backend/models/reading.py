@@ -84,4 +84,3 @@ class ReadingRecord(BaseModel):
     body_temperature: float
     read_at:          str
     received_at:      Optional[str] = None
-    is_simulated:     bool = False

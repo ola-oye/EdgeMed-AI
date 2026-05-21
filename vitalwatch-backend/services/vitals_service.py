@@ -74,8 +74,7 @@ class VitalsService:
         self._devices     = DeviceRepository()
         self._alerts      = AlertService()
 
-    def process_reading(self, payload: ReadingPayload,
-                        is_simulated: bool = False) -> PipelineResult:
+    def process_reading(self, payload: ReadingPayload) -> PipelineResult:
         """
         Full pipeline for one incoming reading.
         All steps are sequential and transactional in intent —
@@ -96,7 +95,7 @@ class VitalsService:
         # Step 2 — resolve timestamp
         read_at = payload.read_at or now_utc()
 
-        # Step 3 — fetch recent readings for inference context (do before insert)
+        # Step 3 — fetch recent readings for inference context
         recent = self._readings.get_recent_for_inference(patient_id, limit=4)
 
         # Step 4 — save reading
@@ -108,7 +107,6 @@ class VitalsService:
             respiration_rate = payload.respiration_rate,
             body_temperature = payload.body_temperature,
             read_at          = read_at,
-            is_simulated     = is_simulated
         )
 
         # Step 5 — run inference
