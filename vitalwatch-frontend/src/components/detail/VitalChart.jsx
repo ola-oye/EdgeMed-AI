@@ -186,8 +186,8 @@ export default function VitalChart({
 
   return (
     <div style={{
-      background:    C.textInverse,
-      border:        '1px solid #EBEBEB',
+      background:    C.bgPrimary,
+      border:        `1px solid ${C.borderSubtle}`,
       borderRadius:  '10px',
       padding:       '12px 14px',
       display:       'flex',
@@ -214,7 +214,7 @@ export default function VitalChart({
             </span>
           </div>
         ) : (
-          <Line ref={chartRef} data={data} options={options} />
+          <Line ref={chartRef} key={`${label}-${timeWindow}`} data={data} options={options} />
         )}
       </div>
 

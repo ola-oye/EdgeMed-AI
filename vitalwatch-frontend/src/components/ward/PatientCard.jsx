@@ -35,7 +35,9 @@ export default function PatientCard({
   patient }) {
   const C = useColors()
   const navigate   = useNavigate()
-  const info       = patient.patient    || {}
+  const enrollment = patient.patient    || {}
+  // enrollment uses 'patient_id' from monitoring_enrollments table
+  const info       = { ...enrollment, id: enrollment.patient_id || enrollment.id }
   const reading    = patient.reading    || {}
   const assessment = patient.assessment || {}
   const risk       = assessment.risk_level || 'stable'

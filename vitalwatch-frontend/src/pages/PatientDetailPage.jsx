@@ -61,6 +61,9 @@ export default function PatientDetailPage() {
     </div>
   )
 
+  // When patient is loaded but has no readings yet
+  const hasNoReadings = !loading && !error && patient && !reading
+
   return (
     <div style={{ display:'flex', flexDirection:'column', flex:1, overflow:'hidden', fontFamily:"'Inter', sans-serif" }}>
 

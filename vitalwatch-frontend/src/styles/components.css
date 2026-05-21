@@ -1,1 +1,318 @@
-/* intentionally empty — styles moved to components */
+/* ─────────────────────────────────────────────
+   components.css
+   CSS classes for AlertFeed (af-) and PatientGrid (pg-)
+   These use CSS custom properties so they respond
+   to [data-theme="dark"] automatically.
+─────────────────────────────────────────────── */
+
+/* ══ ALERT FEED ════════════════════════════════ */
+
+.af-wrap {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  background: var(--af-bg, #FFFFFF);
+  font-family: 'Inter', sans-serif;
+}
+
+.af-header {
+  padding: 14px 15px 12px;
+  border-bottom: 1px solid #EBEBEB;
+  flex-shrink: 0;
+  background: #FFFFFF;
+}
+
+.af-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.af-title {
+  font-family: 'Manrope', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #111111;
+  letter-spacing: -0.2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.af-count-badge {
+  background: #DC2626;
+  color: #FFFFFF;
+  font-size: 10px;
+  font-weight: 700;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  font-family: 'IBM Plex Sans', monospace;
+}
+
+.af-count { /* alias */ }
+
+.af-filters {
+  display: flex;
+  gap: 4px;
+  margin-top: 10px;
+}
+
+.af-filter {
+  padding: 4px 10px;
+  border-radius: 5px;
+  border: 1px solid #EBEBEB;
+  background: transparent;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: #666666;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+.af-filter:hover  { background: #F4F4F4; }
+.af-filter.active,
+.af-filter-active {
+  background: #111111;
+  color: #FFFFFF;
+  border-color: #111111;
+}
+
+.af-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.af-list::-webkit-scrollbar       { width: 4px; }
+.af-list::-webkit-scrollbar-track { background: transparent; }
+.af-list::-webkit-scrollbar-thumb { background: #DDDDDD; border-radius: 2px; }
+
+.af-all-clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px;
+  background: #F0FDF4;
+  border: 1px solid #BBF7D0;
+  border-radius: 8px;
+  color: #15803D;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+}
+
+.af-all-clear-icon {
+  width: 20px;
+  height: 20px;
+  background: #16A34A;
+  color: #FFFFFF;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.af-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 0;
+  font-size: 11px;
+  color: #AAAAAA;
+  font-family: 'IBM Plex Sans', monospace;
+}
+.af-divider::before,
+.af-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #F0F0F0;
+}
+
+.af-empty {
+  text-align: center;
+  padding: 40px 16px;
+}
+.af-empty-title {
+  font-family: 'Manrope', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #555555;
+  margin: 0 0 4px;
+}
+.af-empty-sub {
+  font-size: 12.5px;
+  color: #AAAAAA;
+  margin: 0;
+}
+
+/* ══ PATIENT GRID ══════════════════════════════ */
+
+.pg-wrap {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+}
+
+.pg-header {
+  padding: 14px 18px 12px;
+  background: #FFFFFF;
+  border-bottom: 1px solid #EBEBEB;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pg-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pg-title {
+  font-family: 'Manrope', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #111111;
+  letter-spacing: -0.2px;
+}
+
+.pg-refresh {
+  font-family: 'IBM Plex Sans', monospace;
+  font-size: 11px;
+  color: #AAAAAA;
+}
+
+.pg-counters {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.pg-clear-filter {
+  margin-left: 4px;
+  font-size: 12px;
+  color: #888888;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background 0.12s;
+  font-family: 'Inter', sans-serif;
+}
+.pg-clear-filter:hover { background: #F4F4F4; color: #333333; }
+
+.pg-search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.pg-search-wrap svg {
+  position: absolute;
+  left: 10px;
+  color: #AAAAAA;
+  pointer-events: none;
+}
+
+.pg-search {
+  width: 100%;
+  padding: 7px 32px;
+  border: 1px solid #EBEBEB;
+  border-radius: 7px;
+  font-size: 13px;
+  background: #FAFAFA;
+  color: #111111;
+  transition: border-color 0.15s, background 0.15s;
+  outline: none;
+  font-family: 'Inter', sans-serif;
+}
+.pg-search:focus {
+  border-color: #16A34A;
+  background: #FFFFFF;
+}
+
+.pg-search-clear {
+  position: absolute;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: #AAAAAA;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 2px;
+}
+.pg-search-clear:hover { color: #555555; }
+
+.pg-sublabel {
+  font-family: 'IBM Plex Sans', monospace;
+  font-size: 11px;
+  color: #AAAAAA;
+  margin: -4px 0 0;
+}
+
+.pg-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #F8F8F8;
+}
+.pg-list::-webkit-scrollbar       { width: 4px; }
+.pg-list::-webkit-scrollbar-track { background: transparent; }
+.pg-list::-webkit-scrollbar-thumb { background: #DDDDDD; border-radius: 2px; }
+
+/* ── DARK MODE OVERRIDES ───────────────────── */
+[data-theme="dark"] .af-wrap,
+[data-theme="dark"] .af-header {
+  background: #161B22;
+  border-color: #21262D;
+}
+[data-theme="dark"] .af-title        { color: #E6EDF3; }
+[data-theme="dark"] .af-count-badge  { background: #FF4444; }
+[data-theme="dark"] .af-filter       { border-color: #21262D; color: #8B949E; background: transparent; }
+[data-theme="dark"] .af-filter:hover { background: #1C2128; }
+[data-theme="dark"] .af-filter-active,
+[data-theme="dark"] .af-filter.active{ background: #E6EDF3; color: #0D1117; border-color: #E6EDF3; }
+[data-theme="dark"] .af-list::-webkit-scrollbar-thumb { background: #30363D; }
+[data-theme="dark"] .af-divider      { color: #484F58; }
+[data-theme="dark"] .af-divider::before,
+[data-theme="dark"] .af-divider::after { background: #21262D; }
+[data-theme="dark"] .af-all-clear    { background: #071510; border-color: #0C3018; color: #3FB950; }
+[data-theme="dark"] .af-all-clear-icon { background: #2EA043; }
+[data-theme="dark"] .af-empty-title  { color: #8B949E; }
+[data-theme="dark"] .af-empty-sub    { color: #484F58; }
+
+[data-theme="dark"] .pg-header       { background: #161B22; border-color: #21262D; }
+[data-theme="dark"] .pg-title        { color: #E6EDF3; }
+[data-theme="dark"] .pg-refresh      { color: #484F58; }
+[data-theme="dark"] .pg-search       { background: #1C2128; border-color: #21262D; color: #E6EDF3; }
+[data-theme="dark"] .pg-search:focus { border-color: #2EA043; background: #1C2128; }
+[data-theme="dark"] .pg-sublabel     { color: #484F58; }
+[data-theme="dark"] .pg-list         { background: #0D1117; }
+[data-theme="dark"] .pg-list::-webkit-scrollbar-thumb { background: #30363D; }
+
+/* Shimmer animation for loading skeletons */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}

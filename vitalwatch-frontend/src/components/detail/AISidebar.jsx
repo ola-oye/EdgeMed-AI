@@ -23,7 +23,11 @@ assessment }) {
   }[risk_level] || { label:'Stable', color:C.stableText, bg:C.stableBg, border:C.stableBorder }
 
   const dotCol = { high:C.criticalPure, moderate:C.warningPure, low:C.stablePure }
-  const sorted = Object.entries(contributing_factors).sort((a,b)=>b[1]-a[1])
+  // Defensive: parse if backend sends as string instead of object
+  const parsedFactors = typeof contributing_factors === 'string'
+    ? (() => { try { return JSON.parse(contributing_factors) } catch { return {} } })()
+    : (contributing_factors || {})
+  const sorted = Object.entries(parsedFactors).sort((a,b)=>b[1]-a[1])
 
   function timeAgo(iso) {
     if (!iso) return ''
@@ -77,7 +81,7 @@ assessment }) {
         <div style={sec}>
           <div style={secTitle}>Contributing factors</div>
           <div style={{ display:'flex', flexDirection:'column', gap:'8px' }}>
-            {sorted.map(([vital, pct]) => (
+            {sorted.filter(([,pct]) => typeof pct === 'number' && pct > 0).map(([vital, pct]) => (
               <div key={vital}>
                 <div style={{ display:'flex', justifyContent:'space-between', marginBottom:'3px' }}>
                   <span style={{ fontSize:'11.5px', color:C.textSecondary }}>{vital}</span>

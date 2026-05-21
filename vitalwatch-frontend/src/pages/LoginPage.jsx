@@ -293,6 +293,10 @@ export default function LoginPage() {
           background: var(--stable-pure);
           flex-shrink: 0;
         }
+        .lp-dot-static {
+          /* solid green dot — no animation */
+          opacity: 0.85;
+        }
         .lp-dot-pulse {
           animation: lp-pulse 2s ease-in-out infinite;
         }
@@ -535,6 +539,17 @@ export default function LoginPage() {
         }
         [data-theme="dark"] .lp-submit:hover:not(:disabled) {
           background: #FFFFFF;
+        }
+        [data-theme="dark"] .lp-form-eyebrow {
+          color: var(--stable-pure, #2EA043);
+        }
+        [data-theme="dark"] .lp-error {
+          background: #1A0808;
+          border-color: #3D1515;
+          color: #FF6B6B;
+        }
+        [data-theme="dark"] .lp-left-footer {
+          color: #2E4458;
         }
         [data-theme="dark"] .lp-error {
           background: #1A0808;

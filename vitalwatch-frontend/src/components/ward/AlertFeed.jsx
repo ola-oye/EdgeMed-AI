@@ -68,13 +68,13 @@ export default function AlertFeed({
           </span>
           <div className="af-filters">
             <button
-              className={`af-filter ${filter === 'all' ? 'af-filter-active' : ''}`}
+              className={`af-filter ${filter === 'all' ? 'active' : ''}`}
               onClick={() => onFilterChange?.('all')}
             >
               All
             </button>
             <button
-              className={`af-filter ${filter === 'critical' ? 'af-filter-active' : ''}`}
+              className={`af-filter ${filter === 'critical' ? 'active' : ''}`}
               onClick={() => onFilterChange?.('critical')}
             >
               Critical
