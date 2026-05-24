@@ -12,7 +12,7 @@ import joblib
 import numpy as np
 import pandas as pd
 from datetime import datetime
-from config   import MODEL_PATH, SCALER_PATH, FEATURE_COLS_PATH, VITAL_NORMAL_RANGES
+from config   import MODEL_PATH, SCALER_PATH, FEATURE_COLS_PATH, RISK_LABELS
 from models   import RiskAssessmentResult, ExplanationBullet
 
 
@@ -42,17 +42,9 @@ class InferenceEngine:
         prediction = self._model.predict(scaled)[0]
         proba      = self._model.predict_proba(scaled)[0]
 
-        # Model returns numeric class labels (0, 1, 2) or string labels
-        # depending on how it was trained. Map both cases to expected strings.
-        RISK_LABELS = {0: 'stable', 1: 'warning', 2: 'critical',
-                       '0': 'stable', '1': 'warning', '2': 'critical'}
-        raw        = str(prediction).lower().strip()
-        risk_level = RISK_LABELS.get(prediction,
-                     RISK_LABELS.get(raw, raw))
+        # Model returns numeric class labels (0, 1, 2) — map to risk levels
+        risk_level = RISK_LABELS.get(prediction)
 
-        # Final safety check — ensure value is valid
-        if risk_level not in ('stable', 'warning', 'critical'):
-            risk_level = 'stable'
         confidence_score = float(max(proba)) * 100
         factors          = self._contributing_factors(scaled, df)
         bullets          = self._explanation_bullets(current, recent, risk_level, factors)
@@ -104,25 +96,25 @@ class InferenceEngine:
         # Ensure all vital columns exist
         for v in VITALS:
             if v not in df.columns:
-                df[v] = NORMAL_MID[v]
+                df[v] = NORMAL_MID[v]  # fallback to normal mid if missing
 
-        # Rolling mean (window 3) — exact match to original
+        # Rolling mean (window 3)
         for v in VITALS:
             df[f'{v}_rolling_mean'] = df[v].rolling(3, min_periods=1).mean()
 
-        # Delta — exact match to original
+        # Delta — change from previous reading
         for v in VITALS:
             df[f'{v}_delta'] = df[v].diff().fillna(0)
 
-        # Rolling std (window 5) — exact match to original
+        # Rolling std (window 5) — instability signal
         for v in VITALS:
             df[f'{v}_rolling_std'] = df[v].rolling(5, min_periods=1).std().fillna(0)
 
-        # Deviation from normal midpoint — exact match to original
+        # Deviation from normal midpoint
         for v in VITALS:
             df[f'{v}_deviation'] = abs(df[v] - NORMAL_MID[v])
 
-        # Interaction features — exact match to original
+        # Interaction features
         df['spo2_x_rr']     = df['SpO2'] * df['Respiration_Rate']
         df['hr_x_temp']     = df['Heart_Rate'] * df['Body_Temperature']
         df['spo2_rr_ratio'] = df['SpO2'] / df['Respiration_Rate'].replace(0, np.nan)

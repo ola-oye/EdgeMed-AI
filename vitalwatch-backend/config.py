@@ -33,6 +33,8 @@ DB_USERS      = os.getenv('DB_USERS',      'users.db')
 MODEL_PATH         = os.getenv('MODEL_PATH',         rf_model_path)
 SCALER_PATH        = os.getenv('SCALER_PATH',        scaler_path)
 FEATURE_COLS_PATH  = os.getenv('FEATURE_COLS_PATH',  feature_cols_path)
+RISK_LABELS = {0: 'stable', 1: 'warning', 2: 'critical'}
+
 
 # ─────────────────────────────────────────────
 # ALERT SUPPRESSION

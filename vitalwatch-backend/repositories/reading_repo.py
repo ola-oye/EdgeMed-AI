@@ -20,8 +20,8 @@ class ReadingRepository:
             INSERT INTO readings
                 (id, patient_id, device_id,
                  heart_rate, spo2, respiration_rate, body_temperature,
-                 read_at, received_at, is_simulated)
-            VALUES (?,?,?,?,?,?,?,?,?,?)
+                 read_at, received_at)
+            VALUES (?,?,?,?,?,?,?,?,?)
         """, (reading_id, patient_id, device_id,
               heart_rate, spo2, respiration_rate, body_temperature,
               read_at, now_utc()))

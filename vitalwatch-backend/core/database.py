@@ -163,7 +163,7 @@ _MONITORING_SCHEMA = """
         respiration_rate REAL NOT NULL,
         body_temperature REAL NOT NULL,
         read_at          TEXT NOT NULL,
-        received_at      TEXT DEFAULT (datetime('now')),
+        received_at      TEXT DEFAULT (datetime('now'))
     );
 
     CREATE INDEX IF NOT EXISTS idx_readings_patient
