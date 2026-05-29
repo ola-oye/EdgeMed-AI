@@ -25,7 +25,7 @@ export default function PatientDetailPage() {
   const {
     patient, reading, assessment, alertSev,
     readings, alertHistory, loading, error,
-    isNewReading, timeWindow, setTimeWindow, getTrend
+    isNewReading, getTrend
   } = usePatientDetail(patientId)
 
   function goBack() {
@@ -60,9 +60,6 @@ export default function PatientDetailPage() {
       </div>
     </div>
   )
-
-  // When patient is loaded but has no readings yet
-  const hasNoReadings = !loading && !error && patient && !reading
 
   return (
     <div style={{ display:'flex', flexDirection:'column', flex:1, overflow:'hidden', fontFamily:"'Inter', sans-serif" }}>
@@ -130,6 +127,7 @@ export default function PatientDetailPage() {
               <VitalTile
                 key={key}
                 label={vr.label}
+                fullLabel={vr.fullLabel}
                 value={reading?.[key]}
                 unit={vr.unit}
                 rangeLow={vr.low}
@@ -156,26 +154,6 @@ export default function PatientDetailPage() {
         {/* Charts + time toggle */}
         <div style={{ flex:1, display:'flex', flexDirection:'column', overflow:'hidden', padding:'14px 14px 0' }}>
 
-          {/* Time window toggle — IBM Plex Sans */}
-          <div style={{ display:'flex', gap:'4px', marginBottom:'10px', flexShrink:0 }}>
-            {[{l:'30 min',v:30},{l:'60 min',v:60},{l:'3 hrs',v:180}].map(btn => (
-              <button
-                key={btn.v}
-                onClick={() => setTimeWindow(btn.v)}
-                style={{
-                  padding:'4px 12px', borderRadius:'5px',
-                  border:`1px solid ${timeWindow === btn.v ? C.textPrimary : C.borderSubtle}`,
-                  background: timeWindow === btn.v ? C.textPrimary : 'transparent',
-                  color: timeWindow === btn.v ? C.textInverse : '#666666',
-                  fontFamily:"'IBM Plex Sans', sans-serif",
-                  fontSize:'11.5px', fontWeight:600, cursor:'pointer', transition:'all 0.12s'
-                }}
-              >
-                {btn.l}
-              </button>
-            ))}
-          </div>
-
           {/* 2×2 chart grid — fills remaining height */}
           <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'10px', flex:1, overflowY:'auto', paddingBottom:'10px', minHeight:0 }}>
             {VITALS.map(key => {
@@ -197,7 +175,7 @@ export default function PatientDetailPage() {
                   readings={vReadings}
                   rangeLow={vr.low}
                   rangeHigh={vr.high}
-                  timeWindow={timeWindow}
+                  timeWindow={120}
                   currentValue={reading?.[key]}
                 />
               )

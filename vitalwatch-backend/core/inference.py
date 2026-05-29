@@ -190,11 +190,12 @@ class InferenceEngine:
         c = {key_map.get(k, k): v for k, v in current.items()}
 
         bullets = []
-        checks  = [
-            ('SpO2',             'SpO₂',             'low',  'Blood oxygen is'),
-            ('Heart_Rate',       'Heart Rate',        'high', 'Heart rate is'),
-            ('Respiration_Rate', 'Respiration Rate',  'high', 'Respiratory rate is'),
-            ('Body_Temperature', 'Body Temperature',  'high', 'Temperature is'),
+
+        checks = [
+            ('SpO2',             'SpO₂',  'low',  '%'),
+            ('Heart_Rate',       'HR',    'high', 'bpm'),
+            ('Respiration_Rate', 'RR',    'high', 'brpm'),
+            ('Body_Temperature', 'Temp',  'high', '°F'),
         ]
         ranges = {
             'Heart_Rate':       {'low': 60,   'high': 100,   'unit': 'bpm'},
@@ -203,30 +204,63 @@ class InferenceEngine:
             'Body_Temperature': {'low': 97.5, 'high': 100.4, 'unit': '°F'},
         }
 
-        for key, label, direction, prefix in checks:
+        for key, label, direction, unit in checks:
             val = c.get(key)
             r   = ranges[key]
             if val is None:
                 continue
 
             if direction == 'low' and val < r['low']:
-                pct = round(((r['low'] - val) / r['low']) * 100, 1)
-                sev = 'high' if pct > 8 else 'moderate'
-                bullets.append(ExplanationBullet(
-                    text     = f"{prefix} low at {val}{r['unit']} — {pct}% below normal range.",
-                    severity = sev
-                ))
+                diff = round(r['low'] - val, 1)
+                pct  = round((diff / r['low']) * 100, 1)
+                sev  = 'high' if pct > 8 else 'moderate'
+                # Clinical language: value first, interpretation after
+                if label == 'SpO₂':
+                    text = f"SpO₂ {val}% — below threshold. Hypoxaemia indicated."
+                else:
+                    text = f"{label} {val}{unit} — {diff} below lower limit."
+                bullets.append(ExplanationBullet(text=text, severity=sev))
+
             elif direction == 'high' and val > r['high']:
-                pct = round(((val - r['high']) / r['high']) * 100, 1)
-                sev = 'high' if pct > 8 else 'moderate'
+                diff = round(val - r['high'], 1)
+                pct  = round((diff / r['high']) * 100, 1)
+                sev  = 'high' if pct > 8 else 'moderate'
+                if label == 'HR':
+                    if val >= 120:
+                        text = f"HR {val} bpm — tachycardia. Elevated {diff} above upper limit."
+                    else:
+                        text = f"HR {val} bpm — above normal range."
+                elif label == 'RR':
+                    if val >= 25:
+                        text = f"RR {val} brpm — tachypnoea. Respiratory compromise possible."
+                    else:
+                        text = f"RR {val} brpm — above normal range."
+                elif label == 'Temp':
+                    if val >= 101.5:
+                        text = f"Temp {val}°F — febrile. Pyrexia confirmed."
+                    elif val >= 100.4:
+                        text = f"Temp {val}°F — low-grade pyrexia."
+                    else:
+                        text = f"Temp {val}°F — above normal range."
+                else:
+                    text = f"{label} {val}{unit} — {diff} above upper limit."
+                bullets.append(ExplanationBullet(text=text, severity=sev))
+
+        # Trend observation — uses short clinical label
+        if recent and len(recent) >= 2:
+            hr_now  = c.get('Heart_Rate', 0)
+            hr_prev = recent[-2].get('heart_rate', recent[-1].get('Heart_Rate', hr_now))
+            delta   = round(hr_now - hr_prev, 0)
+            if abs(delta) >= 10:
+                direction_word = 'rising' if delta > 0 else 'falling'
                 bullets.append(ExplanationBullet(
-                    text     = f"{prefix} elevated at {val}{r['unit']} — {pct}% above normal range.",
-                    severity = sev
+                    text     = f"HR {direction_word} — Δ{abs(int(delta))} bpm over last two readings.",
+                    severity = 'moderate'
                 ))
 
         if not bullets:
             bullets.append(ExplanationBullet(
-                text     = "All vital signs are within normal range.",
+                text     = "Vitals within normal limits. No acute findings.",
                 severity = 'low'
             ))
 
@@ -235,8 +269,14 @@ class InferenceEngine:
     def _suggested_action(self, risk_level: str) -> str | None:
         actions = {
             'stable':   None,
-            'warning':  'Assess patient at bedside within 10 minutes. Review vital trends and check for signs of deterioration.',
-            'critical': 'Immediate bedside assessment required. Notify attending physician and prepare for intervention.'
+            'warning':  (
+                'Assess patient. Review trend over last 30 min. '
+                'Repeat observations within 10 min. Notify attending if no improvement.'
+            ),
+            'critical': (
+                'Immediate bedside assessment required. '
+                'Notify attending physician. Prepare for escalation of care.'
+            )
         }
         return actions.get(risk_level)
 

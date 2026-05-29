@@ -1,13 +1,9 @@
 /**
  * LoginPage.jsx
  * ─────────────
- * Login screen for VitalWatch.
- *
- * Aesthetic direction: Clinical precision
- * - Dark left panel with system identity + animated vital line
- * - Clean white right panel with the login form
- * - Sharp geometry, monospaced type accents, instrument-panel feel
- * - No gradients, no purple, no consumer-app softness
+ * Represents both clinical systems:
+ *   — Post-Surgery Patient Monitoring
+ *   — Breast Cancer Detection
  */
 
 import { useState } from 'react'
@@ -23,8 +19,8 @@ const ROLE_ROUTES = {
 }
 
 export default function LoginPage() {
-  const { login }    = useAuth()
-  const navigate     = useNavigate()
+  const { login }  = useAuth()
+  const navigate   = useNavigate()
 
   const [email,    setEmail]    = useState('')
   const [password, setPassword] = useState('')
@@ -48,38 +44,69 @@ export default function LoginPage() {
   return (
     <div className="lp-shell">
 
-      {/* ── LEFT PANEL ─────────────────────────────── */}
+      {/* ── LEFT PANEL ─────────────────────────── */}
       <div className="lp-left">
 
-        {/* Animated ECG line — pure CSS SVG */}
+        {/* Animated ECG */}
         <div className="lp-ecg-wrap" aria-hidden="true">
           <svg className="lp-ecg" viewBox="0 0 600 80" preserveAspectRatio="none">
-            <polyline
-              className="lp-ecg-line"
-              points="
-                0,40 60,40 70,40 80,15 90,65 100,40
-                160,40 170,40 180,15 190,65 200,40
-                260,40 270,40 280,15 290,65 300,40
-                360,40 370,40 380,15 390,65 400,40
-                460,40 470,40 480,15 490,65 500,40
-                560,40 600,40
-              "
-            />
+            <polyline className="lp-ecg-line" points="
+              0,40 60,40 70,40 80,15 90,65 100,40
+              160,40 170,40 180,15 190,65 200,40
+              260,40 270,40 280,15 290,65 300,40
+              360,40 370,40 380,15 390,65 400,40
+              460,40 470,40 480,15 490,65 500,40
+              560,40 600,40
+            "/>
           </svg>
         </div>
 
-        {/* System identity */}
+        {/* Wordmark */}
         <div className="lp-identity">
           <div className="lp-wordmark">
             <span className="lp-vital">Vital</span>
             <span className="lp-watch">Watch</span>
           </div>
-          <p className="lp-tagline">
-            Post-Surgery Patient Monitoring System
-          </p>
+          <p className="lp-tagline">Health AI Platform · Edge Computing</p>
         </div>
 
-        {/* Status indicators */}
+        {/* ── TWO SYSTEM MODULES ─────────────────── */}
+        <div className="lp-modules">
+
+          <div className="lp-module">
+            <div className="lp-module-header">
+              <span className="lp-module-icon">♥</span>
+              <span className="lp-module-title">Post-Surgery Monitoring</span>
+            </div>
+            <p className="lp-module-desc">
+              Continuous vital sign surveillance with real-time AI risk
+              assessment for post-operative patients.
+            </p>
+            <div className="lp-module-roles">
+              <span className="lp-role-tag">Nurse</span>
+              <span className="lp-role-tag">Doctor</span>
+            </div>
+          </div>
+
+          <div className="lp-module-divider" aria-hidden="true" />
+
+          <div className="lp-module">
+            <div className="lp-module-header">
+              <span className="lp-module-icon lp-module-icon--pink">✦</span>
+              <span className="lp-module-title">Breast Cancer Detection</span>
+            </div>
+            <p className="lp-module-desc">
+              On-device AI analysis of ultrasound and mammogram scans
+              with bounding box localisation and confidence scoring.
+            </p>
+            <div className="lp-module-roles">
+              <span className="lp-role-tag">Radiologist</span>
+              <span className="lp-role-tag">Oncologist</span>
+            </div>
+          </div>
+        </div>
+
+        {/* System status */}
         <div className="lp-status-grid">
           <div className="lp-status-item">
             <span className="lp-status-dot lp-dot-pulse" />
@@ -91,18 +118,17 @@ export default function LoginPage() {
           </div>
           <div className="lp-status-item">
             <span className="lp-status-dot lp-dot-static" />
-            <span className="lp-status-label">MQTT Connected</span>
+            <span className="lp-status-label">All Processing On-Device</span>
           </div>
         </div>
 
-        {/* Footer */}
         <p className="lp-left-footer">
           Authorised personnel only.<br />
           All access is logged and monitored.
         </p>
       </div>
 
-      {/* ── RIGHT PANEL ────────────────────────────── */}
+      {/* ── RIGHT PANEL ────────────────────────── */}
       <div className="lp-right">
         <div className="lp-form-wrap">
 
@@ -110,43 +136,35 @@ export default function LoginPage() {
             <div className="lp-form-eyebrow">Clinical Access Portal</div>
             <h1 className="lp-form-title">Sign In</h1>
             <p className="lp-form-subtitle">
-              Enter your credentials to access the dashboard
+              You will be directed to your module based on your assigned role.
             </p>
           </header>
 
           <form className="lp-form" onSubmit={handleSubmit} noValidate>
 
             <div className="lp-field">
-              <label className="lp-label" htmlFor="email">
-                Email Address
-              </label>
+              <label className="lp-label" htmlFor="email">Email Address</label>
               <input
                 id="email"
                 className={`lp-input ${error ? 'lp-input-error' : ''}`}
-                type="email"
-                autoComplete="email"
+                type="email" autoComplete="email"
                 placeholder="you@hospital.org"
                 value={email}
                 onChange={e => { setEmail(e.target.value); setError('') }}
-                required
-                disabled={loading}
+                required disabled={loading}
               />
             </div>
 
             <div className="lp-field">
-              <label className="lp-label" htmlFor="password">
-                Password
-              </label>
+              <label className="lp-label" htmlFor="password">Password</label>
               <input
                 id="password"
                 className={`lp-input ${error ? 'lp-input-error' : ''}`}
-                type="password"
-                autoComplete="current-password"
+                type="password" autoComplete="current-password"
                 placeholder="••••••••"
                 value={password}
                 onChange={e => { setPassword(e.target.value); setError('') }}
-                required
-                disabled={loading}
+                required disabled={loading}
               />
             </div>
 
@@ -158,8 +176,7 @@ export default function LoginPage() {
             )}
 
             <button
-              type="submit"
-              className="lp-submit"
+              type="submit" className="lp-submit"
               disabled={loading || !email || !password}
             >
               {loading
@@ -178,390 +195,298 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* ── INLINE STYLES ──────────────────────────── */}
+      {/* ── STYLES ─────────────────────────────── */}
       <style>{`
-        /* ─── SHELL ──────────────────────────────── */
         .lp-shell {
-          display: flex;
-          min-height: 100vh;
+          display: flex; min-height: 100vh;
           background: #0C0E12;
-          font-family: 'Sora', 'Helvetica Neue', sans-serif;
+          font-family: 'Inter', 'Helvetica Neue', sans-serif;
         }
 
-        /* ─── LEFT PANEL ─────────────────────────── */
+        /* ─── LEFT ───────────────────────────── */
         .lp-left {
-          width: 42%;
+          width: 46%;
           background: #0C0E12;
-          display: flex;
-          flex-direction: column;
+          display: flex; flex-direction: column;
           justify-content: space-between;
-          padding: 56px 52px;
-          position: relative;
-          overflow: hidden;
+          padding: 52px 52px 48px;
+          position: relative; overflow: hidden;
           border-right: 1px solid #111827;
           flex-shrink: 0;
         }
-
-        /* Cross-hair corner marks */
-        .lp-left::before,
-        .lp-left::after {
-          content: '';
-          position: absolute;
-          width: 20px;
-          height: 20px;
+        .lp-left::before, .lp-left::after {
+          content: ''; position: absolute;
+          width: 20px; height: 20px;
         }
         .lp-left::before {
           top: 24px; left: 24px;
-          border-top: 1px solid var(--stable-pure);
-          border-left: 1px solid var(--stable-pure);
+          border-top: 1px solid #16A34A;
+          border-left: 1px solid #16A34A;
         }
         .lp-left::after {
           bottom: 24px; right: 24px;
-          border-bottom: 1px solid var(--stable-pure);
-          border-right: 1px solid var(--stable-pure);
+          border-bottom: 1px solid #16A34A;
+          border-right: 1px solid #16A34A;
         }
 
-        /* ─── ECG LINE ───────────────────────────── */
+        /* ECG */
         .lp-ecg-wrap {
-          position: absolute;
-          bottom: 0; left: 0; right: 0;
-          height: 80px;
-          opacity: 0.18;
-          pointer-events: none;
+          position: absolute; bottom: 0; left: 0; right: 0;
+          height: 80px; opacity: 0.15; pointer-events: none;
         }
-        .lp-ecg {
-          width: 100%;
-          height: 100%;
-        }
+        .lp-ecg { width: 100%; height: 100%; }
         .lp-ecg-line {
-          fill: none;
-          stroke: var(--stable-pure);
+          fill: none; stroke: #16A34A;
           stroke-width: 1.5;
-          stroke-dasharray: 1200;
-          stroke-dashoffset: 1200;
+          stroke-dasharray: 1200; stroke-dashoffset: 1200;
           animation: lp-ecg-draw 3s ease-out forwards,
                      lp-ecg-loop 6s ease-in-out 3s infinite;
         }
-        @keyframes lp-ecg-draw {
-          to { stroke-dashoffset: 0; }
-        }
-        @keyframes lp-ecg-loop {
-          0%,100% { opacity: 1; }
-          50%      { opacity: 0.5; }
-        }
+        @keyframes lp-ecg-draw { to { stroke-dashoffset: 0; } }
+        @keyframes lp-ecg-loop { 0%,100%{opacity:1} 50%{opacity:0.5} }
 
-        /* ─── IDENTITY ───────────────────────────── */
-        .lp-identity {
-          margin-top: auto;
-          margin-bottom: auto;
-        }
+        /* Wordmark */
+        .lp-identity { flex-shrink: 0; }
         .lp-wordmark {
-          font-size: 52px;
-          font-weight: 700;
-          letter-spacing: -1.5px;
-          line-height: 1;
-          margin-bottom: 16px;
+          font-family: 'Manrope', sans-serif;
+          font-size: 50px; font-weight: 800;
+          letter-spacing: -2px; line-height: 1; margin-bottom: 10px;
         }
         .lp-vital { color: #FFFFFF; }
-        .lp-watch { color: var(--stable-pure); }
-
+        .lp-watch { color: #16A34A; }
         .lp-tagline {
-          font-size: 13px;
-          color: #6B7A99;
-          letter-spacing: 0.8px;
-          text-transform: uppercase;
-          line-height: 1.6;
-          max-width: 280px;
+          font-family: 'IBM Plex Sans', monospace;
+          font-size: 11px; color: #4B5A7A;
+          letter-spacing: 0.8px; text-transform: uppercase;
         }
 
-        /* ─── STATUS GRID ────────────────────────── */
+        /* ─── MODULE CARDS ───────────────────── */
+        .lp-modules {
+          display: flex; flex-direction: column; gap: 0;
+          border: 1px solid #1A2035; border-radius: 10px;
+          overflow: hidden; flex-shrink: 0;
+        }
+        .lp-module {
+          padding: 18px 20px;
+          background: rgba(255,255,255,0.025);
+          transition: background 0.2s;
+        }
+        .lp-module:hover { background: rgba(255,255,255,0.04); }
+        .lp-module-divider {
+          height: 1px; background: #1A2035;
+        }
+        .lp-module-header {
+          display: flex; align-items: center; gap: 10px;
+          margin-bottom: 8px;
+        }
+        .lp-module-icon {
+          width: 28px; height: 28px; border-radius: '6px';
+          background: rgba(22,163,74,0.15);
+          border: 1px solid rgba(22,163,74,0.25);
+          display: inline-flex; align-items: center; justify-content: center;
+          font-size: 13px; color: #16A34A; flex-shrink: 0;
+          border-radius: 6px;
+        }
+        .lp-module-icon--pink {
+          background: rgba(236,72,153,0.12);
+          border-color: rgba(236,72,153,0.22);
+          color: #F472B6;
+        }
+        .lp-module-title {
+          font-family: 'Manrope', sans-serif;
+          font-size: 13.5px; font-weight: 700; color: #D1D9E6;
+          letter-spacing: -0.1px;
+        }
+        .lp-module-desc {
+          font-family: 'Inter', sans-serif;
+          font-size: 12px; color: #5A6A88;
+          line-height: 1.6; margin: 0 0 10px;
+        }
+        .lp-module-roles {
+          display: flex; gap: 6px; flex-wrap: wrap;
+        }
+        .lp-role-tag {
+          font-family: 'IBM Plex Sans', monospace;
+          font-size: 10px; font-weight: 600;
+          color: #4B5A7A; background: rgba(255,255,255,0.04);
+          border: 1px solid #1A2035;
+          padding: 2px 8px; border-radius: 4px;
+          letter-spacing: 0.3px;
+        }
+
+        /* ─── STATUS ─────────────────────────── */
         .lp-status-grid {
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
-          margin-bottom: 40px;
-        }
-        .lp-status-item {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-        }
-        .lp-status-dot {
-          width: 7px;
-          height: 7px;
-          border-radius: 50%;
-          background: var(--stable-pure);
+          display: flex; flex-direction: column; gap: 10px;
           flex-shrink: 0;
         }
-        .lp-dot-static {
-          /* solid green dot — no animation */
-          opacity: 0.85;
+        .lp-status-item {
+          display: flex; align-items: center; gap: 10px;
         }
+        .lp-status-dot {
+          width: 7px; height: 7px; border-radius: 50%;
+          background: #16A34A; flex-shrink: 0;
+        }
+        .lp-dot-static { opacity: 0.75; }
         .lp-dot-pulse {
           animation: lp-pulse 2s ease-in-out infinite;
         }
         @keyframes lp-pulse {
-          0%,100% { box-shadow: 0 0 0 0 rgba(46,204,113,0.6); }
-          50%      { box-shadow: 0 0 0 5px rgba(46,204,113,0); }
+          0%,100% { box-shadow: 0 0 0 0 rgba(22,163,74,0.6); }
+          50%      { box-shadow: 0 0 0 5px rgba(22,163,74,0); }
         }
         .lp-status-label {
-          font-size: 12px;
-          color: #8A9BBF;
-          letter-spacing: 0.4px;
-          font-family: 'JetBrains Mono', 'Courier New', monospace;
+          font-family: 'IBM Plex Sans', monospace;
+          font-size: 11.5px; color: #5A6A88; letter-spacing: 0.3px;
         }
 
-        /* ─── LEFT FOOTER ────────────────────────── */
+        /* ─── LEFT FOOTER ────────────────────── */
         .lp-left-footer {
-          font-size: 11px;
-          color: #3D4F6E;
-          line-height: 1.7;
-          letter-spacing: 0.2px;
+          font-family: 'Inter', sans-serif;
+          font-size: 11px; color: #2E3D55;
+          line-height: 1.7; flex-shrink: 0;
         }
 
-        /* ─── RIGHT PANEL ────────────────────────── */
+        /* ─── RIGHT PANEL ────────────────────── */
         .lp-right {
-          flex: 1;
-          background: #FFFFFF;
-          display: flex;
-          align-items: center;
-          justify-content: center;
+          flex: 1; background: #FFFFFF;
+          display: flex; align-items: center; justify-content: center;
           padding: 48px;
         }
+        .lp-form-wrap { width: 100%; max-width: 400px; }
 
-        .lp-form-wrap {
-          width: 100%;
-          max-width: 400px;
-        }
-
-        /* ─── FORM HEADER ────────────────────────── */
-        .lp-form-header {
-          margin-bottom: 40px;
-        }
+        /* Form header */
+        .lp-form-header { margin-bottom: 36px; }
         .lp-form-eyebrow {
-          font-size: 11px;
-          font-weight: 600;
-          letter-spacing: 1.5px;
-          text-transform: uppercase;
-          color: var(--stable-pure);
-          margin-bottom: 12px;
-          font-family: 'JetBrains Mono', 'Courier New', monospace;
+          font-family: 'IBM Plex Sans', monospace;
+          font-size: 11px; font-weight: 600;
+          letter-spacing: 1.5px; text-transform: uppercase;
+          color: #16A34A; margin-bottom: 12px;
         }
         .lp-form-title {
-          font-size: 34px;
-          font-weight: 700;
-          color: #0C0E12;
-          letter-spacing: -0.8px;
-          line-height: 1.1;
-          margin-bottom: 10px;
+          font-family: 'Manrope', sans-serif;
+          font-size: 34px; font-weight: 800;
+          color: #0C0E12; letter-spacing: -0.8px;
+          line-height: 1.1; margin-bottom: 10px;
         }
         .lp-form-subtitle {
-          font-size: 14px;
-          color: #6B7A99;
-          line-height: 1.5;
+          font-family: 'Inter', sans-serif;
+          font-size: 13.5px; color: #6B7A99; line-height: 1.55;
         }
 
-        /* ─── FORM FIELDS ────────────────────────── */
+        /* Fields */
         .lp-form {
-          display: flex;
-          flex-direction: column;
-          gap: 24px;
-          margin-bottom: 32px;
+          display: flex; flex-direction: column; gap: 22px; margin-bottom: 28px;
         }
-
-        .lp-field {
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-        }
-
+        .lp-field { display: flex; flex-direction: column; gap: 7px; }
         .lp-label {
-          font-size: 12px;
-          font-weight: 600;
-          color: #3D4F6E;
-          letter-spacing: 0.4px;
-          text-transform: uppercase;
+          font-family: 'IBM Plex Sans', monospace;
+          font-size: 11.5px; font-weight: 600; color: #3D4F6E;
+          letter-spacing: 0.5px; text-transform: uppercase;
         }
-
         .lp-input {
-          padding: 14px 16px;
-          border: 1.5px solid var(--border-subtle);
-          border-radius: 6px;
-          font-size: 15px;
-          color: #0C0E12;
-          background: var(--bg-secondary);
+          padding: 13px 16px; border: 1.5px solid #E5E8EF;
+          border-radius: 7px; font-size: 15px; color: #0C0E12;
+          background: #F8F9FB;
           transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
-          outline: none;
-          width: 100%;
-          font-family: inherit;
+          outline: none; width: 100%;
+          font-family: 'Inter', sans-serif;
         }
         .lp-input::placeholder { color: #B0BAD0; }
         .lp-input:focus {
-          border-color: var(--stable-pure);
-          background: #FFFFFF;
-          box-shadow: 0 0 0 3px rgba(46,204,113,0.12);
+          border-color: #16A34A; background: #FFFFFF;
+          box-shadow: 0 0 0 3px rgba(22,163,74,0.12);
         }
-        .lp-input:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
-        }
-        .lp-input-error {
-          border-color: var(--critical-pure);
-        }
+        .lp-input:disabled { opacity: 0.6; cursor: not-allowed; }
+        .lp-input-error   { border-color: #DC2626; }
         .lp-input-error:focus {
-          border-color: var(--critical-pure);
-          box-shadow: 0 0 0 3px rgba(198,40,40,0.10);
+          border-color: #DC2626;
+          box-shadow: 0 0 0 3px rgba(220,38,38,0.10);
         }
 
-        /* ─── ERROR ──────────────────────────────── */
+        /* Error */
         .lp-error {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          padding: 12px 14px;
-          background: var(--critical-surface);
-          border: 1px solid var(--critical-border);
-          border-radius: 6px;
-          font-size: 13px;
-          color: var(--critical-pure);
+          display: flex; align-items: center; gap: 8px;
+          padding: 11px 13px;
+          background: #FEF2F2; border: 1px solid #FECACA;
+          border-radius: 7px; font-size: 13px; color: #DC2626;
           animation: lp-shake 0.35s ease;
         }
         @keyframes lp-shake {
-          0%,100% { transform: translateX(0); }
-          20%      { transform: translateX(-4px); }
-          40%      { transform: translateX(4px); }
-          60%      { transform: translateX(-3px); }
-          80%      { transform: translateX(3px); }
+          0%,100%{transform:translateX(0)} 20%{transform:translateX(-4px)}
+          40%{transform:translateX(4px)}   60%{transform:translateX(-3px)}
+          80%{transform:translateX(3px)}
         }
         .lp-error-icon {
-          width: 18px;
-          height: 18px;
-          border-radius: 50%;
-          background: var(--critical-pure);
-          color: #FFFFFF;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 11px;
-          font-weight: 700;
-          flex-shrink: 0;
+          width: 18px; height: 18px; border-radius: 50%;
+          background: #DC2626; color: #FFFFFF;
+          display: flex; align-items: center; justify-content: center;
+          font-size: 11px; font-weight: 700; flex-shrink: 0;
         }
 
-        /* ─── SUBMIT BUTTON ──────────────────────── */
+        /* Submit */
         .lp-submit {
-          width: 100%;
-          padding: 15px;
-          background: #0C0E12;
-          color: #FFFFFF;
-          border: none;
-          border-radius: 6px;
-          font-size: 15px;
-          font-weight: 600;
-          letter-spacing: 0.2px;
-          cursor: pointer;
+          width: 100%; padding: 14px;
+          background: #0C0E12; color: #FFFFFF;
+          border: none; border-radius: 7px;
+          font-family: 'Manrope', sans-serif;
+          font-size: 15px; font-weight: 700;
+          letter-spacing: 0.1px; cursor: pointer;
           transition: background 0.15s, transform 0.1s;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 10px;
-          font-family: inherit;
-          margin-top: 4px;
+          display: flex; align-items: center; justify-content: center;
+          gap: 10px; margin-top: 4px;
         }
-        .lp-submit:hover:not(:disabled) {
-          background: #111827;
-        }
-        .lp-submit:active:not(:disabled) {
-          transform: scale(0.99);
-        }
-        .lp-submit:disabled {
-          opacity: 0.45;
-          cursor: not-allowed;
-        }
-
+        .lp-submit:hover:not(:disabled) { background: #1A2035; }
+        .lp-submit:active:not(:disabled) { transform: scale(0.99); }
+        .lp-submit:disabled { opacity: 0.45; cursor: not-allowed; }
         .lp-btn-spinner {
-          width: 16px;
-          height: 16px;
+          width: 16px; height: 16px;
           border: 2px solid rgba(255,255,255,0.3);
-          border-top-color: #FFFFFF;
-          border-radius: 50%;
-          animation: lp-spin 0.65s linear infinite;
-          flex-shrink: 0;
+          border-top-color: #FFFFFF; border-radius: 50%;
+          animation: lp-spin 0.65s linear infinite; flex-shrink: 0;
         }
-        @keyframes lp-spin {
-          to { transform: rotate(360deg); }
-        }
+        @keyframes lp-spin { to { transform: rotate(360deg); } }
 
-        /* ─── FORM FOOTER ────────────────────────── */
+        /* Form footer */
         .lp-form-footer {
-          font-size: 12px;
-          color: #9BAABB;
-          line-height: 1.7;
-          text-align: center;
+          font-family: 'Inter', sans-serif;
+          font-size: 12px; color: #9BAABB;
+          line-height: 1.7; text-align: center;
         }
 
-        /* ─── RESPONSIVE ─────────────────────────── */
-        @media (max-width: 768px) {
+        /* ─── RESPONSIVE ─────────────────────── */
+        @media (max-width: 900px) {
           .lp-shell    { flex-direction: column; }
-          .lp-left     { width: 100%; padding: 40px 32px 32px; min-height: 220px; }
-          .lp-identity { margin: 0; }
-          .lp-wordmark { font-size: 36px; }
-          .lp-status-grid { display: none; }
+          .lp-left     { width: 100%; padding: 40px 32px 32px; }
+          .lp-modules  { display: none; }
+          .lp-identity { margin-bottom: 20px; }
+          .lp-wordmark { font-size: 38px; }
           .lp-right    { padding: 32px 24px; align-items: flex-start; }
         }
 
-        /* ─── DARK MODE ─────────────────────────── */
-        [data-theme="dark"] .lp-right {
-          background: #0C1018;
-        }
-        [data-theme="dark"] .lp-form-title {
-          color: #E6EDF3;
-        }
+        /* ─── DARK MODE ──────────────────────── */
+        [data-theme="dark"] .lp-right        { background: #0C1018; }
+        [data-theme="dark"] .lp-form-title   { color: #E6EDF3; }
         [data-theme="dark"] .lp-form-subtitle,
-        [data-theme="dark"] .lp-form-footer {
-          color: #6E7681;
-        }
-        [data-theme="dark"] .lp-label {
-          color: #8B949E;
-        }
+        [data-theme="dark"] .lp-form-footer  { color: #6E7681; }
+        [data-theme="dark"] .lp-label        { color: #8B949E; }
         [data-theme="dark"] .lp-input {
-          background: #161B22;
-          border-color: #21262D;
-          color: #E6EDF3;
+          background: #161B22; border-color: #21262D; color: #E6EDF3;
         }
+        [data-theme="dark"] .lp-input::placeholder { color: #484F58; }
         [data-theme="dark"] .lp-input:focus {
-          border-color: #2EA043;
-          background: #161B22;
+          border-color: #2EA043; background: #161B22;
           box-shadow: 0 0 0 3px rgba(46,160,67,0.15);
         }
         [data-theme="dark"] .lp-submit {
-          background: #E6EDF3;
-          color: #0C1018;
+          background: #E6EDF3; color: #0C1018;
         }
-        [data-theme="dark"] .lp-submit:hover:not(:disabled) {
-          background: #FFFFFF;
-        }
-        [data-theme="dark"] .lp-form-eyebrow {
-          color: var(--stable-pure, #2EA043);
-        }
+        [data-theme="dark"] .lp-submit:hover:not(:disabled) { background: #FFFFFF; }
         [data-theme="dark"] .lp-error {
-          background: #1A0808;
-          border-color: #3D1515;
-          color: #FF6B6B;
+          background: #1A0808; border-color: #3D1515; color: #FF6B6B;
         }
-        [data-theme="dark"] .lp-left-footer {
-          color: #2E4458;
-        }
-        [data-theme="dark"] .lp-error {
-          background: #1A0808;
-          border-color: #3D1515;
-        }
+        [data-theme="dark"] .lp-form-eyebrow { color: #2EA043; }
       `}</style>
 
-      {/* Google font for DM Sans + DM Mono */}
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap"
-      />
     </div>
   )
 }

@@ -10,13 +10,13 @@ import { useState, useEffect, useRef } from 'react'
 import { patientsApi, alertsApi }       from '../api/client'
 
 const POLL_INTERVAL  = 15_000
-const HISTORY_WINDOW = 180   // minutes — covers the longest chart window
+const HISTORY_WINDOW = 120   // 2 hours — matches fixed chart window
 
 export const VITAL_RANGES = {
-  heart_rate:       { low: 60,   high: 100,   label: 'Heart Rate',       unit: 'bpm'  },
-  spo2:             { low: 95,   high: 100,   label: 'SpO₂',             unit: '%'    },
-  respiration_rate: { low: 12,   high: 20,    label: 'Respiration Rate', unit: 'brpm' },
-  body_temperature: { low: 97.5, high: 100.4, label: 'Body Temperature', unit: '°F'   }
+  heart_rate:       { low: 60,   high: 100,   label: 'HR',    fullLabel: 'Heart Rate',       unit: 'bpm'  },
+  spo2:             { low: 95,   high: 100,   label: 'SpO₂', fullLabel: 'Oxygen Saturation',  unit: '%'    },
+  respiration_rate: { low: 12,   high: 20,    label: 'RR',   fullLabel: 'Respiration Rate',  unit: 'brpm' },
+  body_temperature: { low: 97.5, high: 100.4, label: 'TEMP', fullLabel: 'Body Temperature',  unit: '°F'   }
 }
 
 export function usePatientDetail(patientId) {
@@ -28,7 +28,6 @@ export function usePatientDetail(patientId) {
   const [alertHistory, setAlertHistory] = useState([])
   const [loading,      setLoading]      = useState(true)
   const [error,        setError]        = useState(null)
-  const [timeWindow,   setTimeWindow]   = useState(60)
 
   const prevReadAt  = useRef(null)
   const intervalRef = useRef(null)
@@ -117,8 +116,6 @@ export function usePatientDetail(patientId) {
     loading,
     error,
     isNewReading,
-    timeWindow,
-    setTimeWindow,
     getTrend,
     refetch: fetchStatus
   }

@@ -19,6 +19,7 @@ async function request(method, path, body = null) {
     throw new Error(err.detail || `HTTP ${res.status}`)
   }
   return res.json()
+  console.log('API response:', res)
 }
 
 const get  = (path)       => request('GET',  path)
