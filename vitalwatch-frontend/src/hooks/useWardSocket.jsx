@@ -3,12 +3,6 @@
  * ───────────────────────
  * WebSocket connection + alert/patient state.
  * WardSocketProvider wraps all monitoring routes — one connection per session.
- *
- * Fixes applied:
- *  - Reconnect reloads data so the grid fills in after late connection
- *  - prevAlertIds updated correctly to detect genuinely new alerts for sound
- *  - Audio context initialised correctly across remounts
- *  - 401 redirect to login on session expiry
  */
 
 import { useState, useEffect, useRef, useCallback, createContext, useContext } from 'react'
@@ -29,6 +23,36 @@ function sortPatients(list) {
     if (ra !== rb) return ra - rb
     return new Date(b.reading?.read_at || 0) - new Date(a.reading?.read_at || 0)
   })
+}
+
+// Merge a single patient_update broadcast into the existing patient list.
+// Returns { next, found }. If the patient is not in the list, found is
+// false and the caller should do a full refresh to pull them in.
+function mergePatientUpdate(prev, msg) {
+  let found = false
+  const next = prev.map(p => {
+    const pid = p.patient?.patient_id || p.patient?.id
+    if (pid !== msg.patient_id) return p
+    found = true
+    return {
+      ...p,                                  // keep identity, bed, surgery info
+      reading:             msg.reading,      // swap in fresh vitals
+      assessment:          msg.assessment,   // swap in fresh AI result
+      open_alert_severity: msg.open_alert_severity
+    }
+  })
+  return { next: found ? sortPatients(next) : next, found }
+}
+
+// Merge a fired/updated alert into the alerts array.
+// Adds it if new, replaces it if it already exists.
+function mergeAlert(prev, alert) {
+  if (!alert) return prev
+  const idx = prev.findIndex(a => a.id === alert.id)
+  if (idx === -1) return [alert, ...prev]
+  const copy = [...prev]
+  copy[idx] = alert
+  return copy
 }
 
 export function WardSocketProvider({ children }) {
@@ -166,16 +190,54 @@ export function WardSocketProvider({ children }) {
     ws.onmessage = (ev) => {
       try {
         const msg = JSON.parse(ev.data)
+
         if (msg.type === 'ping') {
           ws.send(JSON.stringify({ type: 'pong' }))
+          return
         }
+
         if (msg.type === 'patient_update') {
-          refreshPatients()
-          refreshAlerts()
+          // 1. Merge the patient in place using the pushed payload
+          setPatients(prev => {
+            const { next, found } = mergePatientUpdate(prev, msg)
+            // Patient not in list yet (newly enrolled) — pull full list once
+            if (!found) refreshPatients()
+            return next
+          })
+
+          // 2. Handle the alert carried in the payload
+          if (msg.alert) {
+            // Sound only for genuinely new unacknowledged alerts
+            const isNew = !prevAlertIds.current.has(msg.alert.id)
+            if (isNew && msg.alert.status === 'unacknowledged') {
+              if      (msg.alert.severity === 'critical') playCriticalAlert()
+              else if (msg.alert.severity === 'warning')  playWarningAlert()
+            }
+            prevAlertIds.current.add(msg.alert.id)
+            setAlerts(prev => mergeAlert(prev, msg.alert))
+          } else if (msg.open_alert_severity === null) {
+            // Patient returned to stable — backend auto-resolved their alerts.
+            // Drop this patient's open alerts from the local feed.
+            setAlerts(prev => {
+              const stillOpen = prev.filter(a => a.patient_id !== msg.patient_id)
+              if (stillOpen.length !== prev.length) playAllClear()
+              return stillOpen
+            })
+          }
+
+          // 3. Keep count + ward status correct from local alert state
+          setAlerts(prev => {
+            const unacked  = prev.filter(a => a.status === 'unacknowledged')
+            const critical = unacked.some(a => a.severity === 'critical')
+            const warning  = unacked.some(a => a.severity === 'warning')
+            setCount(unacked.length)
+            setWardStatus(critical ? 'critical' : warning ? 'warning' : 'stable')
+            return prev   // no change to the array itself, just deriving counts
+          })
         }
       } catch (_) {}
     }
-  }, [loadData, refreshPatients, refreshAlerts])
+  }, [loadData, refreshPatients])
 
   function scheduleReconnect() {
     clearTimeout(retryTimer.current)
