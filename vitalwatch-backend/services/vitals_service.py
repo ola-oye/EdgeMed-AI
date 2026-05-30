@@ -36,33 +36,44 @@ class UnassignedDeviceError(Exception):
 
 
 class PipelineResult:
-    """Returned by process_reading — used by WebSocket broadcast."""
+    """
+    Returned by process_reading — used by WebSocket broadcast.
+
+    Carries the full reading and assessment objects so the broadcast
+    payload is a complete, self-contained snapshot of one patient.
+
+    IMPORTANT: the 'reading' and 'assessment' shapes here MUST match
+    exactly what PatientService.get_ward_overview() returns for each
+    patient. The frontend merges this payload directly into its patient
+    list. If the API shape changes, this must change with it.
+    """
     __slots__ = (
         'patient_id', 'reading_id', 'assessment_id',
-        'risk_level', 'confidence_score', 'alert', 'device_id'
+        'reading', 'assessment', 'alert', 'device_id'
     )
 
     def __init__(self, patient_id, reading_id, assessment_id,
-                 risk_level, confidence_score, alert, device_id):
-        self.patient_id       = patient_id
-        self.reading_id       = reading_id
-        self.assessment_id    = assessment_id
-        self.risk_level       = risk_level
-        self.confidence_score = confidence_score
-        self.alert            = alert
-        self.device_id        = device_id
+                 reading, assessment, alert, device_id):
+        self.patient_id    = patient_id
+        self.reading_id    = reading_id
+        self.assessment_id = assessment_id
+        self.reading       = reading        # full reading dict (same as API)
+        self.assessment    = assessment     # full assessment dict (same as API)
+        self.alert         = alert
+        self.device_id     = device_id
 
     def to_dict(self) -> dict:
+        # open_alert_severity mirrors the API field; derived from the alert
+        open_alert_severity = self.alert['severity'] if self.alert else None
         return {
-            'type':             'patient_update',
-            'patient_id':       self.patient_id,
-            'reading_id':       self.reading_id,
-            'assessment_id':    self.assessment_id,
-            'risk_level':       self.risk_level,
-            'confidence_score': self.confidence_score,
-            'alert':            self.alert,
-            'device_id':        self.device_id,
-            'timestamp':        now_utc()
+            'type':                'patient_update',
+            'patient_id':          self.patient_id,
+            'reading':             self.reading,
+            'assessment':          self.assessment,
+            'alert':               self.alert,
+            'open_alert_severity': open_alert_severity,
+            'device_id':           self.device_id,
+            'timestamp':           now_utc()
         }
 
 
@@ -139,12 +150,18 @@ class VitalsService:
             result        = result
         )
 
+        # Step 8 — fetch the saved reading and assessment using the SAME
+        # repository methods the API uses, so the broadcast payload is
+        # shape-identical to a ward-overview patient entry.
+        saved_reading    = self._readings.get_latest(patient_id)
+        saved_assessment = self._assessments.get_latest(patient_id)
+
         return PipelineResult(
-            patient_id       = patient_id,
-            reading_id       = reading_id,
-            assessment_id    = assessment_id,
-            risk_level       = result.risk_level,
-            confidence_score = result.confidence_score,
-            alert            = alert,
-            device_id        = payload.device_id
+            patient_id    = patient_id,
+            reading_id    = reading_id,
+            assessment_id = assessment_id,
+            reading       = saved_reading,
+            assessment    = saved_assessment,
+            alert         = alert,
+            device_id     = payload.device_id
         )
