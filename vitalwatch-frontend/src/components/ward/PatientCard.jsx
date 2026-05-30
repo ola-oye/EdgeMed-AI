@@ -44,6 +44,8 @@ export default function PatientCard({ patient, alert, onAcknowledge, onEscalate 
   const navigate   = useNavigate()
   const { user }   = useAuth()
 
+  console.log('PatientCard render:', { patient, alert })
+  
   const enrollment = patient.patient    || {}
   const reading    = patient.reading    || {}
   const assessment = patient.assessment || {}
