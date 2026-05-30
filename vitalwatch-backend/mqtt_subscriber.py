@@ -6,7 +6,6 @@ Receives raw device messages, validates them via Pydantic,
 passes to VitalsService, broadcasts result via WebSocket.
 
 This file has one job: receive and dispatch.
-No business logic, no SQL, no inference.
 """
 
 import json
@@ -70,8 +69,8 @@ def on_message(client, userdata, message):
         logger.info(
             f'[pipeline] device={payload.device_id} '
             f'patient={result.patient_id} '
-            f'risk={result.risk_level.upper()} '
-            f'confidence={result.confidence_score:.1f}%'
+            f'risk={result.assessment["risk_level"].upper()} '
+            f'confidence={result.assessment["confidence_score"]:.1f}%'
         )
         # Push update to all connected browsers
         ws_manager.broadcast_sync(result.to_dict())
